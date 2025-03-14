@@ -1,0 +1,43 @@
+# Carregar as bibliotecas necessárias
+install.packages("ggplot2") # Caso ainda não tenha instalado
+install.packages("ggthemes") # Caso ainda não tenha instalado
+install.packages("scales")   # Caso ainda não tenha instalado
+
+library(ggplot2)
+library(ggthemes)
+library(scales)
+
+# Criar um conjunto de dados fictício (dadosok)
+dadosok <- data.frame(
+  country = c("Brazil", "Argentina", "Colombia", "Chile", "Peru", "Uruguay", "Paraguay", "Bolivia"),
+  `SI.POV.GINI` = c(53.3, 42.4, 46.6, 44.4, 43.1, 40.5, 45.2, 47.8), # Índice de Gini
+  `SP.DYN.LE00.IN` = c(76.5, 77.3, 77.1, 80.1, 76.3, 79.2, 72.0, 70.1)  # Expectativa de Vida ao Nascer
+)
+
+# Verificando os dados criados
+head(dadosok)
+
+# Gráfico de dispersão com as variáveis 'SP.DYN.LE00.IN' e 'SI.POV.GINI'
+grafico_ponto <- ggplot(data = dadosok) +
+  # Pontos dos países (todas as observações)
+  geom_point(aes(x = `SI.POV.GINI`, y = `SP.DYN.LE00.IN`, color = country), size = 4) +
+  
+  # Nome dos países nos pontos
+  geom_text(aes(x = `SI.POV.GINI`, y = `SP.DYN.LE00.IN`, label = country), vjust = -0.5, hjust = 0.5, size = 3) +
+  
+  # Títulos e legendas
+  labs(title = "Relação entre GINI e Expectativa de Vida (2022)",
+       subtitle = "Análise de alguns países da América Latina",
+       x = "Índice de Gini (Desigualdade)",
+       y = "Expectativa de Vida ao Nascer",
+       caption = "Fonte: WDI (World Development Indicators)") +
+  
+  
+  # Ajustando o posicionamento do título e a legenda da fonte
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        axis.title = element_text(size = 11),
+        plot.caption = element_text(size = 9, hjust = 0.5))
+
+# Exibir o gráfico de ponto
+print(grafico_ponto)
