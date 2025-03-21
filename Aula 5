@@ -1,0 +1,66 @@
+#ERNESTO CELVA NETO
+
+##CORTE TRANSVERSAL 
+### COLETAR DADOS DE DUAS VARIÁVEIS
+### FAZER UM GRÁFICO DE DISPERSÃO 
+#### UMA VARIÁVEL EM CADA EIXO ( X E Y)
+
+## SÉRIE TEMPORAL 
+###UMA SÉRIE PARA UM PAÍS ESPECÍFICO 
+
+###1- variaveis escolhidas: Renda Per Capta - taxa de desemprego
+
+# Criando o dataframe com os dados dos países
+#dados <- data.frame(
+#pais = c("Brasil", "Argentina", "Chile", "México", "Peru"),
+  renda_per_capita = c(10200, 9300, 16000, 9500, 11500),
+  taxa_desemprego = c(14.3, 9.8, 7.6, 4.2, 8.1)
+)
+
+# Visualizando os dados
+print(dados)
+
+#INSTALANDO O PACOTE PARA CRIAR UM GRÁFICO:
+
+install.packages("ggplot2")
+library(ggplot2)
+
+#CRIANDO O GRÁFICO
+
+ggplot(dados, aes(x = renda_per_capita, y = taxa_desemprego)) +
+  geom_point()
+  geom_text(aes(label = pais), vjust = 1.5, hjust = 1, size = 3) #NOMEAR PAÍSES
+   labs(title = "Renda per capita vs. Taxa de desemprego",
+       x = "Renda per capita (em dólares)",
+       y = "Taxa de desemprego (%)") 
+  theme_minimal()  # ESTILO MAIS LIMPO PARA O GRÁFICO
+  
+  
+  ##SÉRIE TEMPORAL 
+  #DADO: IPCA 
+  # Criando o dataframe com a inflação (IPCA) do Brasil de 2000 a 2022 (dados reais)
+  dados_inflacao <- data.frame(
+    ano = 2000:2022,  # Sequência de anos de 2000 a 2022
+    inflacao_ipca = c(5.97, 7.67, 12.53, 9.30, 7.60, 5.69, 3.14, 4.46, 5.90,
+                      4.31,5.91, 6.50, 5.84, 6.30, 6.29, 9.03, 6.29, 3.40,
+                      3.75, 3.27, 3.20, 10.06, 5.79)  # Dados de 2000 a 2022
+  )
+  
+  # Verificando o dataframe
+  print(dados_inflacao)
+  
+  # Criando a série temporal para a inflação (IPCA)
+  serie_temporal_inflacao <- ts(dados_inflacao$inflacao_ipca, start = c(2000),
+                                frequency = 1)
+  
+  # Visualizando a série temporal
+  print(serie_temporal_inflacao)
+  
+  # Plotando a série temporal da inflação (IPCA)
+  plot(serie_temporal_inflacao, 
+       main = "Taxa de Inflação (IPCA) do Brasil (2000-2022)", 
+       ylab = "Taxa de Inflação (%)", 
+       xlab = "Ano", 
+       col = "blue", 
+       lwd = 2)  # Linha azul para representar a série temporal
+  
