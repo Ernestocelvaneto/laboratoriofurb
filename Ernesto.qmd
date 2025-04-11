@@ -1,0 +1,100 @@
+---
+title: "Ernesto Celva Neto"
+format: html
+editor: visual
+---
+
+```{r}
+#| label: load-packages
+#| include: false
+
+library(tidyverse)
+library(WDI)
+library(scales)
+library(ggrepel)
+```
+
+```{r}
+#| label: data
+#| include: false
+
+## CORTE TRANSVERSAL
+# Dados
+  dados <- data.frame(
+    pais = c("Brasil", "Argentina", "Chile", "México", "Peru"),
+    renda_per_capita = c(10200, 9300, 16000, 9500, 11500),
+    taxa_desemprego = c(14.3, 9.8, 7.6, 4.2, 8.1)
+  )
+  
+  
+  
+## SÉRIE TEMPORAL
+# Criando o dataframe com a inflação (IPCA) do Brasil de 2000 a 2022 (dados reais)
+dados_inflacao <- data.frame(
+  ano = 2000:2022,  # Sequência de anos de 2000 a 2022
+  inflacao_ipca = c(5.97, 7.67, 12.53, 9.30, 7.60, 5.69, 3.14, 4.46, 5.90,
+                    4.31, 5.91, 6.50, 5.84, 6.30, 6.29, 9.03, 6.29, 3.40,
+                    3.75, 3.27, 3.20, 10.06, 5.79)  # Dados de 2000 a 2022
+)
+
+
+```
+
+## Gráfico Corte Transversal
+
+O gráfico construído representa um gráfico de dispersão baseado em dados de corte transversal, ou seja, informações de diferentes países coletadas em um mesmo momento no tempo. Esse tipo de análise é útil para comparar características econômicas entre unidades (países, estados, empresas, etc.) e investigar possíveis relações entre variáveis.
+
+Neste gráfico, foi utilizada uma amostra de cinco países latino-americanos: Brasil, Argentina, Chile, México e Peru. As duas variáveis analisadas foram a renda per capita (em dólares) e a taxa de desemprego (em porcentagem). A renda per capita foi posicionada no eixo X e a taxa de desemprego no eixo Y. Cada ponto do gráfico representa um país, com sua posição definida pelos valores dessas duas variáveis. Os nomes dos países foram adicionados próximos aos pontos, facilitando a identificação de cada um.
+
+A visualização permite observar, de forma geral, que países com maior renda per capita tendem a apresentar taxas de desemprego mais baixas, como é o caso do Chile e do México. Já o Brasil, mesmo com uma renda per capita relativamente alta em comparação aos seus vizinhos, apresentou a maior taxa de desemprego da amostra. Esse tipo de gráfico é bastante útil para explorar relações entre variáveis econômicas, ajudando a formular hipóteses ou identificar padrões que podem ser analisados com mais profundidade em estudos estatísticos ou econométricos.
+
+```{r}
+#| label: graf1
+#| warning: false
+#| echo: false
+
+ggplot(dados, aes(x = renda_per_capita, y = taxa_desemprego)) +
+    geom_point(color = "#0072B2", size = 4) +  # Azul escuro
+    geom_text_repel(aes(label = pais), size = 4.2) +  # Rótulos sem sobreposição
+    labs(
+      title = "Correlação entre Renda per Capita e Taxa de Desemprego",
+      subtitle = "América Latina (dados hipotéticos)",
+      x = "Renda per capita (em dólares)",
+      y = "Taxa de desemprego (%)"
+    ) +
+    scale_x_continuous(labels = scales::comma) +  # Separador de milhar
+    theme_minimal(base_size = 13) +
+    theme(
+      plot.title = element_text(face = "bold", size = 16),
+      plot.subtitle = element_text(size = 12),
+      axis.title = element_text(face = "bold")
+    )
+
+```
+
+## Gráfico Série Temporal
+
+O gráfico apresentado refere-se a uma série temporal da taxa de inflação (IPCA) no Brasil no período de 2000 a 2022. Um gráfico de série temporal é um tipo de representação que mostra a variação de uma variável ao longo do tempo, sendo muito utilizado em análises econômicas e estatísticas. No caso em questão, o gráfico retrata a inflação medida pelo Índice Nacional de Preços ao Consumidor Amplo (IPCA), que é o indicador oficial utilizado pelo governo brasileiro para monitorar a variação dos preços ao consumidor. Ele serve de base para a política monetária do país, especialmente na definição da taxa de juros pelo Banco Central.
+
+O eixo horizontal do gráfico representa os anos, de 2000 a 2022, enquanto o eixo vertical mostra a taxa de inflação anual correspondente a cada ano. Cada ponto azul indica a inflação registrada em determinado ano, e a linha que liga os pontos permite observar a evolução da inflação ao longo do tempo. Além disso, foi incluída uma linha vermelha tracejada representando a média da inflação nesse período, o que permite comparar os anos com inflação acima ou abaixo da média histórica.
+
+A análise da série mostra que a inflação teve comportamentos variados ao longo do tempo, com destaque para alguns picos, como em 2002 (12,53%), 2003 (9,30%), 2015 (9,03%) e 2021 (10,06%). Esses anos refletem momentos de instabilidade econômica ou choques externos, como crises políticas, econômicas ou sanitárias. Por outro lado, alguns anos apresentaram inflação mais baixa, como 2006 (3,14%), 2017 (3,40%), 2019 (3,27%) e 2020 (3,20%). De maneira geral, observa-se que após o pico de 2015, a inflação teve uma trajetória de relativa estabilidade até 2020, voltando a subir em 2021 devido a fatores como a pandemia de COVID-19, a alta nos preços de energia e combustíveis e as pressões inflacionárias globais.
+
+Os dados utilizados para a construção do gráfico foram obtidos no site do Instituto Brasileiro de Geografia e Estatística (IBGE), responsável pela produção e divulgação oficial do IPCA no Brasil. Portanto, trata-se de uma fonte confiável e amplamente utilizada em estudos econômicos no país.
+
+```{r}
+#| label: graf2
+#| warning: false
+#| echo: false
+
+ggplot(dados_inflacao, aes(x = ano, y = inflacao_ipca)) +
+  geom_line(color = "blue", size = 1.2) +
+  geom_point(color = "blue", size = 2) +
+  geom_hline(yintercept = mean(dados_inflacao$inflacao_ipca),
+             linetype = "dashed", color = "red") +
+  labs(title = "Taxa de Inflação (IPCA) do Brasil (2000-2022)",
+       x = "Ano", y = "Inflação (%)") +
+  theme_minimal()
+
+
+```
