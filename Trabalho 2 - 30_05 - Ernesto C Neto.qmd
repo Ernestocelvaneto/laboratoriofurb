@@ -1,0 +1,108 @@
+---
+title: "Média Mensal do IGP-M"
+format: html
+editor: visual
+---
+
+## O que o gráfico mostra?
+
+O gráfico animado apresenta a média mensal do Índice Geral de Preços - Mercado (IGP-M), desde janeiro de 2000 até a data mais recente disponível. O IGP-M é um índice amplamente utilizado no Brasil para medir a inflação em diversos setores da economia, abrangendo desde preços no atacado até bens e serviços para o consumidor final.
+
+Ele é calculado e divulgado mensalmente pela Fundação Getulio Vargas (FGV) e possui grande relevância para contratos de aluguel, reajustes de tarifas públicas, contratos financeiros e diversos acordos comerciais.
+
+```{r}
+#| label: load-packages
+#| include: false
+
+library(tidyverse)
+library(GetBCBData)
+library(gganimate)
+library(gifski)
+library(lubridate)
+```
+
+```{r}
+#| label: load-data
+#| include: false
+
+my.id <- c(igpm = 189)
+
+df.bcb <- gbcbd_get_series(
+  id = my.id,
+  first.date = as.Date("2000-01-01"),
+  last.date = Sys.Date(),
+  format.data = "long",
+  use.memoise = TRUE,
+  cache.path = tempdir(),
+  do.parallel = FALSE
+)
+
+df.bcb <- df.bcb %>% mutate(mes = floor_date(ref.date, unit = "month"))
+
+df.mes <- df.bcb %>% 
+  group_by(mes) %>% 
+  summarise(media_igpm = mean(value, na.rm = TRUE))
+
+```
+
+```{r}
+#| label: graf-igpm
+#| warning: false
+#| echo: false
+
+ggplot(df.mes, aes(x = mes, y = media_igpm)) +
+  geom_line(color = "#2c7fb8", size = 1) +
+  geom_point(color = "#000000", size = 1) +
+  labs(
+    title = "Média Mensal do IGP-M",
+    subtitle = 'Data: {frame_along}',  # Mês animado
+    x = "Data",
+    y = "Variação % (média mensal)",
+    caption = "Fonte: Banco Central do Brasil | FGV"
+  ) +
+  theme_minimal() +
+  transition_reveal(mes)
+
+```
+
+### Significado econômico do IGP-M
+
+O IGP-M é composto por três subíndices principais:
+
+-   **IPA (Índice de Preços ao Produtor Amplo)** — cobre preços no atacado, influenciando diretamente os custos de produção;
+
+-   **IPC (Índice de Preços ao Consumidor)** — reflete a variação dos preços de bens e serviços consumidos pelas famílias;
+
+-   **INCC (Índice Nacional de Custo da Construção)** — mede a variação dos custos na construção civil.
+
+Por isso, o IGP-M representa uma visão mais ampla e complexa da inflação, captando mudanças de preços desde matérias-primas até o consumidor final.
+
+### Relevância para contratos e economia
+
+Devido à sua abrangência e divulgação antecipada, o IGP-M é usado como referência para reajustes de contratos de aluguel residencial e comercial, tarifas públicas como energia elétrica e serviços de água, além de instrumentos financeiros, como títulos públicos indexados a inflação.
+
+Assim, a variação do IGP-M afeta diretamente o custo de vida das famílias, os custos das empresas e o desempenho do setor imobiliário, impactando a economia como um todo.
+
+### Padrões e eventos importantes observados no gráfico
+
+-   **Períodos de alta forte**: Episódios de inflação elevada no Brasil, como crises econômicas ou choques de preços internacionais, refletem picos expressivos no IGP-M.
+
+-   **Fases de estabilidade**: Em momentos de controle inflacionário e políticas econômicas eficazes, o IGP-M apresenta menor volatilidade e tendência de estabilidade.
+
+-   **Oscilações sazonais**: Algumas variações podem ser atribuídas a fatores sazonais ligados à produção agrícola e preços de commodities.
+
+O gráfico animado permite acompanhar a evolução mês a mês, ajudando a identificar tendências, períodos de aceleração inflacionária e de arrefecimento.
+
+### Relação com a política econômica e monetária
+
+Assim como outros índices de inflação, o IGP-M influencia decisões do Banco Central sobre a taxa básica de juros (Selic). Altas consistentes no índice pressionam o Banco Central a aumentar os juros para conter a inflação, enquanto quedas ou estabilidade podem abrir espaço para cortes na taxa, estimulando o consumo e o crescimento.
+
+Além disso, o IGP-M é monitorado por investidores e agentes do mercado financeiro para ajustar suas expectativas e estratégias diante do cenário macroeconômico.
+
+### Fonte dos dados
+
+-   **Fundação Getulio Vargas (FGV)** — responsável pela elaboração e divulgação do IGP-M.
+
+-   **Banco Central do Brasil** — fonte secundária para séries históricas e análise.
+
+    Os dados foram obtidos via pacote `GetBCBData` no software R, utilizando a função `gbcbd_get_series()` para extrair a série temporal do IGP-M (código 189 no SGS).
